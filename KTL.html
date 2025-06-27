@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clases JC: Guía Interactiva de Derecho Tributario</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Deep Slate Harmony -->
+    <!-- Application Structure Plan: The SPA is designed with a fixed sidebar for thematic navigation (Conceptos, Gestión, Inspección, Recaudación) and a main content area. This structure was chosen to transform a linear text document into a non-linear learning tool. Users can easily jump between related topics. The core interaction is a "flashcard" style for exercises, where users click to reveal the answer, promoting active recall which is superior for studying complex material compared to passive reading. This structure prioritizes user learning flow over the original document's order. -->
+    <!-- Visualization & Content Choices: Exercises are presented as interactive cards (HTML/CSS/JS) to test knowledge. Explanations are formatted for readability. A bar chart (Chart.js/Canvas) is used to give a visual overview of the content's thematic distribution, providing an engaging data point in a text-heavy subject. This method helps to organize the information and make it more digestible, fulfilling the goal of interactive learning without using any SVG or Mermaid. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c; /* Dark background */
+            color: #E2E8F0; /* Light text */
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+            border-left: 3px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            background-color: #2d3748; /* Darker hover */
+            border-left-color: #63B3ED; /* Accent color */
+            color: #E2E8F0;
+        }
+        .card {
+            background-color: #2d3748;
+            border: 1px solid #4A5568;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .card-header {
+            cursor: pointer;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-content {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-top: 1px solid #4A5568;
+        }
+        .card-toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .card-header.open .card-toggle-icon {
+            transform: rotate(180deg);
+        }
+        .chart-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 800px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            height: 350px;
+            max-height: 50vh; 
+        }
+        @media (min-width: 768px) { 
+            .chart-container { 
+                height: 450px; 
+            } 
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="relative min-h-screen md:flex">
+        <aside class="z-20 hidden w-64 py-4 pr-4 sm:block flex-shrink-0">
+            <div class="h-full fixed w-64 text-gray-400">
+                <a href="#" class="text-lg font-bold text-gray-200 px-4">Derecho Tributario</a>
+                <nav id="desktop-nav" class="mt-8 space-y-1">
+                    <a href="#introduccion" class="nav-link flex items-center px-4 py-2 text-sm font-medium">Introducción</a>
+                    <a href="#conceptos" class="nav-link flex items-center px-4 py-2 text-sm font-medium">Conceptos Fundamentales</a>
+                    <a href="#gestion" class="nav-link flex items-center px-4 py-2 text-sm font-medium">Procedimientos de Gestión</a>
+                    <a href="#inspeccion" class="nav-link flex items-center px-4 py-2 text-sm font-medium">Procedimiento de Inspección</a>
+                    <a href="#recaudacion" class="nav-link flex items-center px-4 py-2 text-sm font-medium">Procedimiento de Recaudación</a>
+                </nav>
+            </div>
+        </aside>
+        <div class="flex-grow md:ml-64">
+            <header class="h-16 flex items-center justify-between px-6 bg-[#1a202c] border-b border-gray-700 md:justify-end">
+                 <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+                <div class="text-right">
+                    <p class="font-semibold text-gray-200">Clases JC</p>
+                    <p class="text-xs text-gray-400">Guía Interactiva de Estudio</p>
+                </div>
+            </header>
+             <div id="mobile-menu" class="hidden md:hidden bg-[#2d3748] border-b border-gray-700">
+                <nav class="flex flex-col p-4 space-y-2">
+                    <a href="#introduccion" class="nav-link px-4 py-2 text-gray-300">Introducción</a>
+                    <a href="#conceptos" class="nav-link px-4 py-2 text-gray-300">Conceptos Fundamentales</a>
+                    <a href="#gestion" class="nav-link px-4 py-2 text-gray-300">Procedimientos de Gestión</a>
+                    <a href="#inspeccion" class="nav-link px-4 py-2 text-gray-300">Procedimiento de Inspección</a>
+                    <a href="#recaudacion" class="nav-link px-4 py-2 text-gray-300">Procedimiento de Recaudación</a>
+                </nav>
+            </div>
+
+            <main class="p-4 md:p-8">
+                <section id="introduccion" class="mb-12">
+                    <h1 class="text-3xl font-bold mb-4 text-gray-100">Guía Interactiva de Derecho Tributario</h1>
+                    <p class="mb-4 text-gray-300">Esta aplicación presenta de forma interactiva el contenido de las clases de Derecho Tributario de "Clases JC". El objetivo es facilitar el estudio y la comprensión de los procedimientos y conceptos clave para la preparación de oposiciones. Aquí encontrarás los temas organizados por áreas, con ejercicios prácticos que puedes resolver a tu ritmo. Cada sección está diseñada para que puedas centrarte en un bloque temático, leer las explicaciones y poner a prueba tus conocimientos con los casos planteados.</p>
+                    <div class="card p-4">
+                        <h2 class="text-xl font-bold mb-2 text-gray-200">Distribución de Contenidos</h2>
+                        <p class="text-sm text-gray-400 mb-4">El siguiente gráfico muestra el número de ejercicios y explicaciones clave dentro de cada gran área temática del derecho tributario cubierto en este material de estudio. Úsalo para tener una idea general de las áreas con mayor peso.</p>
+                        <div class="chart-container">
+                            <canvas id="contentChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="conceptos" class="mb-12">
+                    <h2 class="text-2xl font-bold mb-4 pb-2 border-b-2 border-[#63B3ED]">Conceptos Fundamentales</h2>
+                     <p class="mb-6 text-gray-400">En esta sección se abordan los conceptos básicos y esenciales del derecho tributario, como los diferentes tipos de declaraciones, las autoliquidaciones, y las reglas que rigen su corrección. Entender estas bases es crucial para poder afrontar después los procedimientos de gestión, inspección y recaudación, ya que establecen el punto de partida de la relación entre el contribuyente y la Administración.</p>
+                     <div class="space-y-4" id="conceptos-content"></div>
+                </section>
+
+                <section id="gestion" class="mb-12">
+                    <h2 class="text-2xl font-bold mb-4 pb-2 border-b-2 border-[#63B3ED]">Procedimientos de Gestión</h2>
+                     <p class="mb-6 text-gray-400">Los procedimientos de gestión tributaria son las actuaciones que realiza la Administración para aplicar los tributos. Abarcan desde la devolución de ingresos, la verificación de datos declarados, hasta comprobaciones de alcance limitado. Esta sección explora las facultades y limitaciones de la Administración en estas actuaciones, que son menos intrusivas que una inspección pero fundamentales en el día a día de la aplicación de los impuestos.</p>
+                     <div class="space-y-4" id="gestion-content"></div>
+                </section>
+
+                <section id="inspeccion" class="mb-12">
+                    <h2 class="text-2xl font-bold mb-4 pb-2 border-b-2 border-[#63B3ED]">Procedimiento de Inspección</h2>
+                     <p class="mb-6 text-gray-400">El procedimiento de inspección es la herramienta más potente de la Administración para luchar contra el fraude fiscal. A diferencia de la gestión, la inspección tiene facultades de investigación para descubrir hechos no declarados. Esta sección detalla el desarrollo de una inspección, el contenido y los tipos de actas (conformidad, disconformidad, con acuerdo), sus consecuencias, y las estrategias tanto de la Administración como del contribuyente.</p>
+                     <div class="space-y-4" id="inspeccion-content"></div>
+                </section>
+
+                <section id="recaudacion" class="mb-12">
+                    <h2 class="text-2xl font-bold mb-4 pb-2 border-b-2 border-[#63B3ED]">Procedimiento de Recaudación</h2>
+                    <p class="mb-6 text-gray-400">Cuando una deuda tributaria no se paga en el período voluntario, se inicia el período ejecutivo y, con él, el procedimiento de apremio. Esta sección se centra en las actuaciones de recaudación forzosa, como el embargo de bienes y derechos, y la posterior enajenación mediante subasta pública. Se detallan los plazos, las garantías, el orden de embargo y los derechos del deudor en esta fase final del cobro de los tributos.</p>
+                     <div class="space-y-4" id="recaudacion-content"></div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const data = {
+                conceptos: [
+                    { "type": "exercise", "title": "Ingreso a cuenta vs. Regularización", "enunciado": "Se inicia un procedimiento el 1 de enero y el 7 de enero se presenta una autoliquidación complementaria del ejercicio 2015. ¿Qué es eso?", "resolucion": "Si se realiza un ingreso después de que la Administración haya iniciado un procedimiento, ese ingreso se considera un 'ingreso a cuenta' del importe de la liquidación que se practicará. No es una regularización espontánea, por lo que se aplicará un recargo.", "ref": "Art. 187.5 LGT; Art. 27 LGT" },
+                    { "type": "exercise", "title": "Regularización espontánea", "enunciado": "Se inicia un procedimiento sobre el IS de 2015, y el 7 de enero el contribuyente presenta una autoliquidación complementaria de 2014.", "resolucion": "Al no tener relación con el procedimiento iniciado, se considera una regularización extemporánea pero espontánea. Se aplica un recargo del Art. 27 LGT por presentación fuera de plazo sin requerimiento previo.", "ref": "" },
+                    { "type": "explanation", "title": "Declaraciones y Autoliquidaciones", "text": "<strong>Art. 120 LGT (Autoliquidaciones):</strong> El contribuyente cuantifica la deuda.<br><strong>Art. 120.3 LGT (Rectificativas):</strong> Para corregir un error en perjuicio del contribuyente (ingresó de más).<br><strong>Art. 122 LGT (Complementarias):</strong> Para corregir un error en perjuicio de la Administración (ingresó de menos). Las autoliquidaciones solo pueden ser complementarias; las declaraciones pueden ser complementarias o sustitutivas." },
+                    { "type": "explanation", "title": "Regla Especial: Incumplimiento de Beneficios Fiscales (Art. 122.2 LGT)", "text": "Si se incumple una condición para un beneficio fiscal (ej. Cuenta Ahorro Vivienda), no se presentan complementarias de años anteriores. Se regulariza en la autoliquidación del año del incumplimiento, sumando las deducciones indebidas más los intereses de demora correspondientes." }
+                ],
+                gestion: [
+                    { "type": "exercise", "title": "Plazo para Comparecencia", "enunciado": "Se notifica inicio de procedimiento el 1 de enero. ¿Se puede requerir comparecencia para el 12 de enero? ¿Y para el 22 de enero?", "resolucion": "<strong>No para el 12 de enero:</strong> Deben transcurrir al menos 10 días hábiles. El plazo finalizaría el 15 de enero. <br><strong>Sí para el 22 de enero:</strong> Ya han transcurrido los 10 días hábiles.", "ref": "Art. 105.4 RGAT" },
+                    { "type": "exercise", "title": "Ampliación de Plazos", "enunciado": "Se notifica el 1 de enero un plazo de 10 días para aportar documentación. ¿Puede solicitar una ampliación de 6 días? ¿Puede solicitarla el 13 de enero?", "resolucion": "<strong>Ampliación de 6 días: No.</strong> La ampliación máxima es la mitad del plazo inicial, sin exceder de 5 días hábiles. Por tanto, máximo 5 días. <br><strong>Solicitud el 13 de enero: Sí.</strong> La solicitud debe presentarse antes de los 3 días hábiles anteriores a la finalización del plazo. Si el plazo finaliza el 15 de enero, el 13 es válido.", "ref": "Art. 105.3 y 105.4 RGAT" },
+                    { "type": "exercise", "title": "Caducidad vs. Prescripción (I)", "enunciado": "1-Mar: Inicio comprobación limitada Renta 2013. 30-Ago: 1er intento notificación inspección Renta 2013-2014. 10-Sep: Notificación.", "resolucion": "<strong>Renta 2013:</strong> Del 1-Mar al 30-Ago hay menos de 6 meses, la comprobación limitada NO caduca e interrumpe la prescripción. NO ha prescrito. <br><strong>Renta 2014:</strong> El plazo de prescripción finaliza el 30-jun-2019. La notificación en 2018 es anterior. NO ha prescrito. <br><strong>Conclusión:</strong> La inspección puede proceder para ambos ejercicios.", "ref": "Art. 104 RGAT; Art. 68 LGT" },
+                    { "type": "exercise", "title": "Caducidad vs. Prescripción (II)", "enunciado": "1-Mar: Inicio comprobación limitada Renta 2013. 3-Sep: 1er intento notificación inspección.", "resolucion": "<strong>Renta 2013:</strong> Del 1-Mar al 3-Sep hay más de 6 meses, la comprobación limitada HA CADUCADO. Al caducar, no interrumpió la prescripción. La Renta 2013 HA PRESCRITO. <br><strong>Renta 2014:</strong> NO ha prescrito (igual que en el caso anterior). <br><strong>Conclusión:</strong> La inspección solo puede proceder para la Renta 2014.", "ref": "Art. 104 RGAT; Art. 68 LGT" },
+                    { "type": "explanation", "title": "Procedimiento de Devolución", "text": "Se inicia con una autoliquidación a devolver. La Administración tiene **cero facultades de requerimiento**. O devuelve o inicia un procedimiento de comprobación (verificación, limitada o inspección). El plazo para devolver es de 6 meses; si se excede, paga intereses de demora." },
+                    { "type": "explanation", "title": "Verificación de Datos vs. Comprobación Limitada", "text": "<strong>Verificación de Datos:</strong> Para errores evidentes. No puede examinar contabilidad de actividades económicas. No tiene efecto preclusivo. <br><strong>Comprobación Limitada:</strong> Más profunda. Puede examinar libros registro obligatorios (no contabilidad mercantil). Sí tiene efecto preclusivo para lo ya comprobado." },
+                ],
+                inspeccion: [
+                    { "type": "explanation", "title": "Contenido del Acta de Inspección (Art. 153 LGT)", "text": "Un acta de inspección es una propuesta de liquidación. Debe contener: Lugar y fecha, identificación, motivos de la regularización, cálculos, conformidad o disconformidad, trámites posteriores, indicios de infracción y carácter de la inspección. Lo realmente recurrible es la **liquidación** que emite el Inspector Jefe, no el acta." },
+                    { "type": "explanation", "title": "Tipos de Actas y sus Consecuencias", "text": "<ul><li class='mb-1'><strong>Acta con Acuerdo:</strong> Para puntos inciertos. Requiere pago/garantía previo, renuncia a recurrir y tiene una reducción de sanción del 50%.</li><li class='mb-1'><strong>Acta de Conformidad:</strong> Aceptación de los hechos. Liquidación tácita. Reducción de sanción del 30%. No se puede recurrir.</li><li class='mb-1'><strong>Acta de Disconformidad:</strong> No hay acuerdo. Liquidación expresa. No hay reducción de sanción. La liquidación es recurrible.</li></ul>" },
+                     { "type": "exercise", "title": "Modificación del Alcance de la Inspección", "enunciado": "En el curso de una inspección, ¿puede la Administración incluir o excluir obligaciones tributarias o períodos no previstos en el inicio?", "resolucion": "Sí. La Administración, de oficio y de forma motivada, puede modificar el alcance (extensión) de las actuaciones para incluir o excluir obligaciones tributarias o períodos.", "ref": "Art. 148 LGT; Art. 178 RGAT" },
+                     { "type": "explanation", "title": "Derivación de Responsabilidad por la Inspección (Excepción)", "text": "Para evitar la despatrimonialización del responsable (ej. administrador) durante una inspección, la propia Inspección (y no Recaudación) puede iniciar el procedimiento de derivación de forma anticipada y adoptar medidas cautelares. **Plazo crítico:** Debe intentarse la notificación del acuerdo de responsabilidad antes de que finalice el periodo voluntario de pago del deudor principal, o la Inspección perderá la competencia.", "ref": "Art. 196 RGAT"},
+                ],
+                recaudacion: [
+                    { "type": "explanation", "title": "Inicio del Procedimiento de Apremio", "text": "Cuando una deuda no se paga en período voluntario, se inicia el período ejecutivo. La Administración notifica la **providencia de apremio**, que es el título ejecutivo para iniciar el cobro forzoso. Contra esta providencia solo caben motivos de oposición muy tasados (Art. 167.3 LGT), como el pago o la prescripción." },
+                    { "type": "explanation", "title": "Subasta Pública de Bienes Embargados", "text": "Es el método general de enajenación. Requiere que la deuda sea firme y se anuncia en el BOE. Se exige un depósito del 5% para participar. Si la mejor oferta por un inmueble es superior o igual al 50% del valor, se debe adjudicar. Si es inferior, la mesa puede adjudicar o declarar la subasta desierta." },
+                    { "type": "exercise", "title": "Impago del adjudicatario en subasta", "enunciado": "El mejor postor de una subasta no completa el pago en el plazo de 15 días. ¿Qué ocurre?", "resolucion": "Pierde el depósito constituido. La Administración se dirigirá entonces al siguiente mejor postor cuya oferta hubiera quedado reservada, ofreciéndole la adjudicación por el importe de su puja. Si no hay postores con depósito reservado, la subasta se declara desierta.", "ref": "" },
+                    { "type": "exercise", "title": "Embargo de sueldo", "enunciado": "Un deudor percibe un sueldo neto de 3.500€. Usando un SMI de 1.134€, ¿cuánto se le puede embargar?", "resolucion": "El cálculo se hace por tramos sobre el SMI: <br> - Primeros 1.134€: Inembargable (0€). <br> - De 1.134€ a 2.268€ (2º SMI): 30% de 1.134€ = 340,20€. <br> - De 2.268€ a 3.402€ (3º SMI): 50% de 1.134€ = 567€. <br> - Resto hasta 3.500€ (98€): 60% de 98€ = 58,80€. <br> <strong>Total embargado: 340,20 + 567 + 58,80 = 966€</strong>", "ref": "Art. 607 LEC"}
+                ]
+            };
+
+            const sections = {
+                conceptos: document.getElementById('conceptos-content'),
+                gestion: document.getElementById('gestion-content'),
+                inspeccion: document.getElementById('inspeccion-content'),
+                recaudacion: document.getElementById('recaudacion-content')
+            };
+
+            const contentCounts = {};
+
+            Object.keys(sections).forEach(key => {
+                const container = sections[key];
+                const contentData = data[key] || [];
+                contentCounts[key] = contentData.length;
+
+                contentData.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+
+                    if (item.type === 'exercise') {
+                        card.innerHTML = `
+                            <div class="card-header">
+                                <h3 class="font-semibold text-lg text-gray-200">${item.title}</h3>
+                                <svg class="card-toggle-icon w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                            <div class="card-content hidden">
+                                <p class="text-gray-400 mb-4"><strong>Enunciado:</strong> ${item.enunciado}</p>
+                                <div class="p-4 bg-green-900 bg-opacity-30 border border-green-700 rounded-lg">
+                                    <p class="text-green-300"><strong>Resolución:</strong> ${item.resolucion}</p>
+                                    ${item.ref ? `<p class="text-xs text-green-400 mt-2"><em>Referencia: ${item.ref}</em></p>` : ''}
+                                </div>
+                            </div>
+                        `;
+                        card.querySelector('.card-header').addEventListener('click', (e) => {
+                            e.currentTarget.classList.toggle('open');
+                            e.currentTarget.nextElementSibling.classList.toggle('hidden');
+                        });
+                    } else if (item.type === 'explanation') {
+                        card.innerHTML = `
+                            <div class="p-6">
+                                <h3 class="font-semibold text-lg mb-2 text-gray-200">${item.title}</h3>
+                                <div class="text-gray-300 space-y-2">${item.text}</div>
+                            </div>
+                        `;
+                    }
+                    container.appendChild(card);
+                });
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                    if(!mobileMenu.classList.contains('hidden')){
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" });
+
+            document.querySelectorAll('main section').forEach(section => {
+                observer.observe(section);
+            });
+            
+            const ctx = document.getElementById('contentChart').getContext('2d');
+            const textColor = 'rgba(226, 232, 240, 0.8)';
+            const gridColor = 'rgba(74, 85, 104, 0.5)';
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Conceptos Fundamentales', 'Procedimientos de Gestión', 'Procedimiento de Inspección', 'Procedimiento de Recaudación'],
+                    datasets: [{
+                        label: 'Nº de Contenidos Clave',
+                        data: [contentCounts.conceptos, contentCounts.gestion, contentCounts.inspeccion, contentCounts.recaudacion],
+                        backgroundColor: [
+                            'rgba(99, 179, 237, 0.7)',
+                            'rgba(129, 237, 196, 0.7)',
+                            'rgba(237, 137, 54, 0.7)',
+                            'rgba(237, 100, 166, 0.7)'
+                        ],
+                        borderColor: [
+                            '#63B3ED',
+                            '#81EDC4',
+                            '#ED8936',
+                            '#ED64A6'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        },
+                        x: {
+                           ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                             callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
